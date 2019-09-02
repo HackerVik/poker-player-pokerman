@@ -13,13 +13,15 @@ public class Player {
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
         JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
+        JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
         int currentBuyIn = gameState.get("current_buy_in").getAsInt();
-
+        int stack = player.get("stack").getAsInt();
 
         if(communityCards.size() > 0) {
             if (checkCards(gameState)) return call(gameState);
             else return check();
         } else {
+            if(hasAce(gameState) && !(currentBuyIn > (stack * 0.2))) return call(gameState);
             if(currentBuyIn > 400 && !hasHandPair(gameState)) return check();
             else if (currentBuyIn < 400 && !hasHandPair(gameState)) return call(gameState);
             else return allIn(gameState);
@@ -66,5 +68,14 @@ public class Player {
 
     public static int allIn(JsonObject gameState) {
         return gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject().get("stack").getAsInt();
+    }
+
+    public static boolean hasAce(JsonObject gameState) {
+        JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
+        JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
+        for(int i = 0; i < holeCards.size(); i++) {
+            if(holeCards.get(i).getAsJsonObject().get("rank").getAsString().equals("A")) return true;
+        }
+        return false;
     }
 }
