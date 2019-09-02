@@ -1,6 +1,5 @@
 package org.leanpoker.player;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,7 +18,7 @@ public class Player {
         int currentBuyIn = gameState.get("current_buy_in").getAsInt();
         int stack = player.get("stack").getAsInt();
 
-        if(getActivePlayersNum(gameState) <= 3) {
+        if(getActivePlayersNum(gameState) <= 3 || hasAce(gameState)) {
             if (communityCards.size() > 0) {
                 if (checkCards(gameState)) return call(gameState);
                 if (hasAtLeastFourSuit(gameState)) return call(gameState);
@@ -115,5 +114,26 @@ public class Player {
             if(players.get(i).getAsJsonObject().get("status").getAsString().equals("active")) counter++;
         }
         return counter;
+    }
+
+    public static boolean isCallLegJavaBet(JsonObject gameState) {
+        JsonArray players = gameState.get("players").getAsJsonArray();
+        boolean isHigh = false;
+        for (int i = 0; i < players.size(); i++) {
+            if(players.get(i).getAsJsonObject().get("name").getAsString().equals("LegJava")
+                    && players.get(i).getAsJsonObject().get("bet").getAsInt() > 700) {
+                isHigh = true;
+            }
+        }
+        if(isHigh) {
+            for (int i = 0; i < players.size(); i++) {
+                if (!(players.get(i).getAsJsonObject().get("name").getAsString().equals("LegJava"))
+                        && players.get(i).getAsJsonObject().get("bet").getAsInt() > 700) {
+                        return false;
+                }
+            }
+        return true;
+        }
+        return false;
     }
 }
