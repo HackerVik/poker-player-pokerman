@@ -25,9 +25,9 @@ public class Player {
                 if (hasAtLeastFourSuit(gameState)) return call(gameState);
                 else return check();
             } else {
+                if (hasHandPair(gameState) && hasHighPairInHand(gameState)) return allIn(gameState);
                 if (hasAce(gameState) && !(currentBuyIn > (stack * 0.2))) return call(gameState);
                 if (currentBuyIn > 400 && !hasHandPair(gameState)) return check();
-                else if (hasHandPair(gameState) && hasHighPairInHand(gameState)) return allIn(gameState);
                 return check();
             }
         }
