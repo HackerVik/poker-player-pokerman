@@ -1,5 +1,6 @@
 package org.leanpoker.player;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -11,7 +12,8 @@ public class Player {
 
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
-        return call(gameState);
+        if(checkCards(gameState)) return call(gameState);
+        return check();
     }
 
     public static void showdown(JsonElement game) {
@@ -26,5 +28,19 @@ public class Player {
 
     public static int check() {
         return 0;
+    }
+
+    public static boolean checkCards(JsonObject gameState) {
+        JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
+        JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
+        JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
+        for (int i = 0; i < holeCards.size(); i++) {
+            JsonObject card = holeCards.get(i).getAsJsonObject();
+            for (int j = 0; j < communityCards.size(); j++) {
+                JsonObject communityCard = communityCards.get(j).getAsJsonObject();
+                if(card.get("rank").equals(communityCard.get("rank"))) return true;
+            }
+        }
+        return false;
     }
 }
