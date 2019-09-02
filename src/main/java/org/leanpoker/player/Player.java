@@ -8,12 +8,12 @@ import java.util.Map;
 
 public class Player {
 
-    static final String VERSION = "1.0.3";
+    static final String VERSION = "1.0.4";
 
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
-        int round = gameState.get("round").getAsInt();
-        if(round >= 1) {
+        JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
+        if(communityCards.size() > 0) {
             if (checkCards(gameState)) return call(gameState);
             else check();
         }
@@ -38,6 +38,11 @@ public class Player {
         JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
         JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
         JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
+        if(hasPair(holeCards, communityCards)) return true;
+        return false;
+    }
+
+    public static boolean hasPair(JsonArray holeCards, JsonArray communityCards) {
         for (int i = 0; i < holeCards.size(); i++) {
             JsonObject card = holeCards.get(i).getAsJsonObject();
             for (int j = 0; j < communityCards.size(); j++) {
