@@ -8,11 +8,13 @@ import java.util.Map;
 
 public class Player {
 
-    static final String VERSION = "1.0.4";
+    static final String VERSION = "1.0.5";
 
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
         JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
+        int currentBuyIn = gameState.get("current_buy_in").getAsInt();
+        if(currentBuyIn > 400) return check();
         if(communityCards.size() > 0) {
             if (checkCards(gameState)) return call(gameState);
             else return check();
@@ -42,6 +44,7 @@ public class Player {
     }
 
     public static boolean hasPair(JsonArray holeCards, JsonArray communityCards) {
+        if(holeCards.get(0).getAsJsonObject().get("rank").equals(holeCards.get(1).getAsJsonObject().get("rank"))) return true;
         for (int i = 0; i < holeCards.size(); i++) {
             JsonObject card = holeCards.get(i).getAsJsonObject();
             for (int j = 0; j < communityCards.size(); j++) {
