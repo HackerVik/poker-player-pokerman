@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class Player {
@@ -25,7 +27,8 @@ public class Player {
             if(hasAce(gameState) && !(currentBuyIn > (stack * 0.2))) return call(gameState);
             if(currentBuyIn > 400 && !hasHandPair(gameState)) return check();
             else if (currentBuyIn < 400 && !hasHandPair(gameState)) return call(gameState);
-            else return allIn(gameState);
+            else if (hasHandPair(gameState) && hasHighPairInHand(gameState)) return allIn(gameState);
+            return call(gameState);
         }
     }
 
@@ -94,5 +97,12 @@ public class Player {
             }
         }
         return counter >= 2;
+    }
+
+    public static boolean hasHighPairInHand(JsonObject gameState) {
+        JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
+        JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
+        String[] highCards = new String[] {"A", "K", "Q", "J", "10"};
+        return Arrays.asList(highCards).contains(holeCards.get(0).getAsJsonObject().get("rank").getAsString());
     }
 }
