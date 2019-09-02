@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Player {
 
-    static final String VERSION = "2.1.3";
+    static final String VERSION = "2.2.2";
 
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
@@ -26,7 +26,6 @@ public class Player {
         } else {
             if(hasAce(gameState) && !(currentBuyIn > (stack * 0.2))) return call(gameState);
             if(currentBuyIn > 400 && !hasHandPair(gameState)) return check();
-            else if (currentBuyIn < 400 && !hasHandPair(gameState)) return call(gameState);
             else if (hasHandPair(gameState) && hasHighPairInHand(gameState)) return allIn(gameState);
             return check();
         }
