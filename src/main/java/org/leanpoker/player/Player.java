@@ -12,8 +12,8 @@ public class Player {
 
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
-        int orbit = gameState.get("orbits").getAsInt();
-        if(orbit >= 2) {
+        int round = gameState.get("round").getAsInt();
+        if(round >= 2) {
             if (checkCards(gameState)) return call(gameState);
             else check();
         }
