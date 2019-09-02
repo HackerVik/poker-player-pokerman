@@ -19,6 +19,7 @@ public class Player {
 
         if(communityCards.size() > 0) {
             if (checkCards(gameState)) return call(gameState);
+            if (hasAtLeastFourSuit(gameState)) return call(gameState);
             else return check();
         } else {
             if(hasAce(gameState) && !(currentBuyIn > (stack * 0.2))) return call(gameState);
@@ -77,5 +78,21 @@ public class Player {
             if(holeCards.get(i).getAsJsonObject().get("rank").getAsString().equals("A")) return true;
         }
         return false;
+    }
+
+    public static boolean hasAtLeastFourSuit(JsonObject gameState) {
+        JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
+        JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
+        JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
+        int counter = 0;
+
+        boolean sameSuit = holeCards.get(0).getAsJsonObject().get("suit").equals(holeCards.get(1).getAsJsonObject().get("suit"));
+        if(sameSuit) {
+            String suit = holeCards.get(0).getAsJsonObject().get("suit").getAsString();
+            for(int i = 0; i < communityCards.size(); i++) {
+                if(communityCards.get(i).getAsJsonObject().get("suit").getAsString().equals(suit)) counter++;
+            }
+        }
+        return counter >= 2;
     }
 }
