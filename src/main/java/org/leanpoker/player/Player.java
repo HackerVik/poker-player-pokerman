@@ -15,7 +15,7 @@ public class Player {
         JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
         if(communityCards.size() > 0) {
             if (checkCards(gameState)) return call(gameState);
-            else check();
+            else return check();
         }
         return call(gameState);
     }
@@ -38,8 +38,7 @@ public class Player {
         JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
         JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
         JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
-        if(hasPair(holeCards, communityCards)) return true;
-        return false;
+        return hasPair(holeCards, communityCards);
     }
 
     public static boolean hasPair(JsonArray holeCards, JsonArray communityCards) {
