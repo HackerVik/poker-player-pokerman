@@ -11,7 +11,7 @@ public class Player {
 
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
-        return 1000;
+        return call(gameState);
     }
 
     public static void showdown(JsonElement game) {
@@ -19,7 +19,7 @@ public class Player {
 
     public static int call(JsonObject gameState) {
 
-        int currentBuyIn = gameState.get("currentÍ_buy_in").getAsInt();
+        int currentBuyIn = gameState.get("current_buy_in").getAsInt();
         int bet = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject().get("bet").getAsInt();
         return  currentBuyIn - bet;
     }
