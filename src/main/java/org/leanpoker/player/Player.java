@@ -28,7 +28,7 @@ public class Player {
             if(currentBuyIn > 400 && !hasHandPair(gameState)) return check();
             else if (currentBuyIn < 400 && !hasHandPair(gameState)) return call(gameState);
             else if (hasHandPair(gameState) && hasHighPairInHand(gameState)) return allIn(gameState);
-            return call(gameState);
+            return check();
         }
     }
 
