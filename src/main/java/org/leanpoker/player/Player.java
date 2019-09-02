@@ -15,13 +15,15 @@ public class Player {
         JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
         int currentBuyIn = gameState.get("current_buy_in").getAsInt();
 
-        if(currentBuyIn > 400 && !hasHandPair(gameState)) return check();
 
         if(communityCards.size() > 0) {
             if (checkCards(gameState)) return call(gameState);
             else return check();
+        } else {
+            if(currentBuyIn > 400 && !hasHandPair(gameState)) return check();
+            else if (currentBuyIn < 400 && !hasHandPair(gameState)) return call(gameState);
+            else return allIn(gameState);
         }
-        return call(gameState);
     }
 
     public static void showdown(JsonElement game) {
@@ -60,5 +62,9 @@ public class Player {
         JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
         JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
         return holeCards.get(0).getAsJsonObject().get("rank").equals(holeCards.get(1).getAsJsonObject().get("rank"));
+    }
+
+    public static int allIn(JsonObject gameState) {
+        return gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject().get("stack").getAsInt();
     }
 }
