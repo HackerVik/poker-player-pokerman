@@ -13,7 +13,7 @@ public class Player {
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
         int round = gameState.get("round").getAsInt();
-        if(round >= 2) {
+        if(round >= 1) {
             if (checkCards(gameState)) return call(gameState);
             else check();
         }
