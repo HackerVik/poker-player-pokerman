@@ -1,12 +1,11 @@
 package org.leanpoker.player;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Player {
 
@@ -15,20 +14,24 @@ public class Player {
     public static int betRequest(JsonElement request) {
         JsonObject gameState = request.getAsJsonObject();
         JsonArray communityCards = gameState.get("community_cards").getAsJsonArray();
-        JsonObject player = gameState.get("players").getAsJsonArray().get(gameState.get("in_action").getAsInt()).getAsJsonObject();
+        JsonArray players = gameState.get("players").getAsJsonArray();
+        JsonObject player = players.get(gameState.get("in_action").getAsInt()).getAsJsonObject();
         int currentBuyIn = gameState.get("current_buy_in").getAsInt();
         int stack = player.get("stack").getAsInt();
 
-        if(communityCards.size() > 0) {
-            if (checkCards(gameState)) return call(gameState);
-            if (hasAtLeastFourSuit(gameState)) return call(gameState);
-            else return check();
-        } else {
-            if(hasAce(gameState) && !(currentBuyIn > (stack * 0.2))) return call(gameState);
-            if(currentBuyIn > 400 && !hasHandPair(gameState)) return check();
-            else if (hasHandPair(gameState) && hasHighPairInHand(gameState)) return allIn(gameState);
-            return check();
+        if(getActivePlayersNum(gameState) <= 3) {
+            if (communityCards.size() > 0) {
+                if (checkCards(gameState)) return call(gameState);
+                if (hasAtLeastFourSuit(gameState)) return call(gameState);
+                else return check();
+            } else {
+                if (hasAce(gameState) && !(currentBuyIn > (stack * 0.2))) return call(gameState);
+                if (currentBuyIn > 400 && !hasHandPair(gameState)) return check();
+                else if (hasHandPair(gameState) && hasHighPairInHand(gameState)) return allIn(gameState);
+                return check();
+            }
         }
+        return check();
     }
 
     public static void showdown(JsonElement game) {
@@ -103,5 +106,14 @@ public class Player {
         JsonArray holeCards = player.get("hole_cards").getAsJsonArray();
         String[] highCards = new String[] {"A", "K", "Q", "J", "10"};
         return Arrays.asList(highCards).contains(holeCards.get(0).getAsJsonObject().get("rank").getAsString());
+    }
+
+    public static int getActivePlayersNum(JsonObject gameState) {
+        JsonArray players = gameState.get("players").getAsJsonArray();
+        int counter = 0;
+        for (int i = 0; i < players.size(); i++) {
+            if(players.get(i).getAsJsonObject().get("status").getAsString().equals("active")) counter++;
+        }
+        return counter;
     }
 }
