@@ -38,7 +38,7 @@ buildscript {
 }
 
 dependencies {
-    def tomcatVersion = '7.0.76'
+    def tomcatVersion = '7.0.109'
 
     compile 'com.google.code.gson:gson:2.2.4'
     providedCompile "org.apache.tomcat:tomcat-servlet-api:${tomcatVersion}"
